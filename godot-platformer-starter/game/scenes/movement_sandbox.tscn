@@ -1,116 +1,106 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://game/runtime/sandbox/sandbox_director.gd" id="1"]
 [ext_resource type="Script" path="res://game/runtime/player/player_controller.gd" id="2"]
 [ext_resource type="Script" path="res://game/runtime/content/content_loader.gd" id="3"]
 [ext_resource type="Script" path="res://game/runtime/input/input_adapter.gd" id="4"]
 [ext_resource type="Script" path="res://game/presentation/debug/input_trace.gd" id="5"]
-[ext_resource type="Script" path="res://game/runtime/combat/training_enemy.gd" id="6"]
-[ext_resource type="Script" path="res://game/runtime/artifacts/artifact_runtime_system.gd" id="7"]
+[ext_resource type="Script" path="res://game/runtime/artifacts/artifact_runtime_system.gd" id="6"]
+[ext_resource type="Script" path="res://game/runtime/sandbox/sandbox_camera_controller.gd" id="7"]
+[ext_resource type="Script" path="res://game/runtime/sandbox/zone_tracker.gd" id="8"]
 
-[sub_resource type="RectangleShape2D" id="Floor"]
-size = Vector2(390, 36)
 [sub_resource type="CapsuleShape2D" id="Player"]
 radius = 11.0
 height = 34.0
+
 [sub_resource type="RectangleShape2D" id="Probe"]
 size = Vector2(18, 6)
+
 [sub_resource type="RectangleShape2D" id="Dash"]
 size = Vector2(46, 22)
-[sub_resource type="CapsuleShape2D" id="Enemy"]
-radius = 10.0
-height = 30.0
 
 [node name="MovementSandbox" type="Node2D"]
 script = ExtResource("1")
-[node name="Backdrop" type="ColorRect" parent="."]
-offset_right = 390.0
-offset_bottom = 844.0
-color = Color(0.035, 0.051, 0.075, 1)
-mouse_filter = 2
+
 [node name="World" type="Node2D" parent="."]
+
+[node name="ZoneBackdrops" type="Node2D" parent="World"]
+
 [node name="Platforms" type="Node2D" parent="World"]
-[node name="Floor" type="StaticBody2D" parent="World/Platforms"]
-position = Vector2(195, 780)
-collision_layer = 1
-collision_mask = 0
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Platforms/Floor"]
-shape = SubResource("Floor")
-[node name="Surface" type="Polygon2D" parent="World/Platforms/Floor"]
-polygon = PackedVector2Array(-195, -18, 195, -18, 195, 18, -195, 18)
-color = Color(0.29, 0.34, 0.38, 1)
+
 [node name="Enemies" type="Node2D" parent="World"]
-[node name="TrainingEnemy01" type="CharacterBody2D" parent="World/Enemies"]
-position = Vector2(260, 744)
-collision_layer = 4
-collision_mask = 1
-script = ExtResource("6")
-instance_key = "enemy_training_01"
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Enemies/TrainingEnemy01"]
-shape = SubResource("Enemy")
-[node name="Body" type="Polygon2D" parent="World/Enemies/TrainingEnemy01"]
-polygon = PackedVector2Array(0, -15, 10, -7, 9, 15, -9, 15, -10, -7)
-color = Color(0.68, 0.12, 0.08, 1)
-[node name="TrainingEnemy02" type="CharacterBody2D" parent="World/Enemies"]
-position = Vector2(300, 744)
-collision_layer = 4
-collision_mask = 1
-script = ExtResource("6")
-instance_key = "enemy_training_02"
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Enemies/TrainingEnemy02"]
-shape = SubResource("Enemy")
-[node name="Body" type="Polygon2D" parent="World/Enemies/TrainingEnemy02"]
-polygon = PackedVector2Array(0, -15, 10, -7, 9, 15, -9, 15, -10, -7)
-color = Color(0.68, 0.12, 0.08, 1)
+
 [node name="RespawnAnchors" type="Node2D" parent="World"]
-[node name="Start" type="Marker2D" parent="World/RespawnAnchors"]
-position = Vector2(195, 720)
+
 [node name="RoomTriggers" type="Node2D" parent="World"]
+
 [node name="Player" type="CharacterBody2D" parent="."]
 position = Vector2(195, 720)
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("2")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("Player")
+
 [node name="GroundShapeCast" type="ShapeCast2D" parent="Player"]
 position = Vector2(0, 18)
 target_position = Vector2(0, 3)
 shape = SubResource("Probe")
 collision_mask = 1
+
 [node name="WallShapeCast" type="ShapeCast2D" parent="Player"]
 target_position = Vector2(16, 0)
 shape = SubResource("Probe")
 collision_mask = 1
+
 [node name="CeilingShapeCast" type="ShapeCast2D" parent="Player"]
 position = Vector2(0, -18)
 target_position = Vector2(0, -3)
 shape = SubResource("Probe")
 collision_mask = 1
+
 [node name="DashHitShapeCast" type="ShapeCast2D" parent="Player"]
 target_position = Vector2(80, 0)
 shape = SubResource("Dash")
 collision_mask = 4
+
 [node name="Presentation" type="Node2D" parent="Player"]
+
 [node name="Body" type="Polygon2D" parent="Player/Presentation"]
 polygon = PackedVector2Array(0, -18, 11, -6, 9, 17, -9, 17, -11, -6)
 color = Color(0.96, 0.91, 0.78, 1)
+
 [node name="CameraRig" type="Node2D" parent="."]
 position = Vector2(195, 422)
+script = ExtResource("7")
+
 [node name="Camera2D" type="Camera2D" parent="CameraRig"]
 enabled = true
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
 [node name="Systems" type="Node" parent="."]
+
 [node name="ContentLoader" type="Node" parent="Systems"]
 script = ExtResource("3")
+
 [node name="InputAdapter" type="Node" parent="Systems"]
 process_physics_priority = -10
 script = ExtResource("4")
+
 [node name="ArtifactSystem" type="Node" parent="Systems"]
-script = ExtResource("7")
+script = ExtResource("6")
+
+[node name="ZoneTracker" type="Node" parent="Systems"]
+script = ExtResource("8")
+
 [node name="ReplayRecorder" type="Node" parent="Systems"]
+
 [node name="ReplayRunner" type="Node" parent="Systems"]
-[node name="SandboxDirector" type="Node" parent="Systems"]
+
 [node name="DebugUI" type="CanvasLayer" parent="."]
+
 [node name="InputTrace" type="Control" parent="DebugUI"]
 layout_mode = 3
 anchors_preset = 15
@@ -120,32 +110,79 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("5")
+
 [node name="Panel" type="ColorRect" parent="DebugUI"]
 offset_left = 12.0
 offset_top = 16.0
 offset_right = 378.0
 offset_bottom = 130.0
 color = Color(0.02, 0.03, 0.05, 0.82)
+
 [node name="Status" type="Label" parent="DebugUI/Panel"]
 offset_right = 366.0
 offset_bottom = 28.0
 text = "LOADING"
 horizontal_alignment = 1
+theme_override_font_sizes/font_size = 13
+
 [node name="Intent" type="Label" parent="DebugUI/Panel"]
 offset_top = 28.0
 offset_right = 366.0
 offset_bottom = 56.0
 text = "intent: waiting"
 horizontal_alignment = 1
+
 [node name="Movement" type="Label" parent="DebugUI/Panel"]
 offset_top = 56.0
 offset_right = 366.0
 offset_bottom = 84.0
 text = "state: grounded"
 horizontal_alignment = 1
+
 [node name="Event" type="Label" parent="DebugUI/Panel"]
 offset_top = 84.0
 offset_right = 366.0
 offset_bottom = 112.0
 text = "event: waiting"
 horizontal_alignment = 1
+
+[node name="ZonePrompt" type="Label" parent="DebugUI"]
+offset_left = 12.0
+offset_top = 790.0
+offset_right = 378.0
+offset_bottom = 832.0
+text = "Loading zone…"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ReviewPanel" type="ColorRect" parent="DebugUI"]
+visible = false
+offset_left = 28.0
+offset_top = 220.0
+offset_right = 362.0
+offset_bottom = 610.0
+color = Color(0.055, 0.065, 0.09, 0.96)
+
+[node name="Title" type="Label" parent="DebugUI/ReviewPanel"]
+offset_top = 22.0
+offset_right = 334.0
+offset_bottom = 58.0
+text = "F · RUN REVIEW"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+
+[node name="Summary" type="Label" parent="DebugUI/ReviewPanel"]
+offset_left = 24.0
+offset_top = 82.0
+offset_right = 310.0
+offset_bottom = 282.0
+text = "A · not visited · pending"
+theme_override_font_sizes/font_size = 16
+
+[node name="ResetButton" type="Button" parent="DebugUI/ReviewPanel"]
+offset_left = 76.0
+offset_top = 315.0
+offset_right = 258.0
+offset_bottom = 365.0
+text = "RESET SIX-ZONE RUN"

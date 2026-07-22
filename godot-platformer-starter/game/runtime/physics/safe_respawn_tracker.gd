@@ -11,6 +11,7 @@ func observe(body:CharacterBody2D,contacts)->bool:
 func respawn(body:CharacterBody2D)->bool:
 	if not _has:return false
 	body.global_position=_position;body.velocity=Vector2.ZERO;return true
+func reset(seed_position:Vector2)->void:_position=seed_position;_has=true
 func has_safe_position()->bool:return _has
 func safe_global_position()->Vector2:return _position
 func _overlaps_enemy(body:CharacterBody2D)->bool:

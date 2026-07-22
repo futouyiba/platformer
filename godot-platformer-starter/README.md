@@ -1,6 +1,6 @@
 # Godot Platformer Starter
 
-Recovered Godot 4 / GDScript Gate 1 implementation through M5 for [Issue #7](https://github.com/futouyiba/platformer/issues/7). The project is isolated from other prototypes and keeps gameplay rules in scene-independent `RefCounted` Core classes.
+Godot 4 / GDScript Gate 1 movement sandbox through the M6 six-zone graybox tracked by [Issue #8](https://github.com/futouyiba/platformer/issues/8). The project is isolated from other prototypes and keeps gameplay rules in scene-independent `RefCounted` Core classes.
 
 ## Included
 
@@ -10,8 +10,9 @@ Recovered Godot 4 / GDScript Gate 1 implementation through M5 for [Issue #7](htt
 - M3: Ground/Wall/Ceiling probes, swept dash-hit query, per-action target deduplication, and safe respawn.
 - M4: DamagePacket, mass-scaled knockback, stun, death, duplicate-action rejection, and training enemies.
 - M5: centralized Blade Talisman, Wind Ring, and Starfall Seal trigger resolution.
+- M6: data-driven A–F graybox zones for dash, jump/double-jump, Wind Ring, fast-fall, wall-slide, and review/reset validation.
 
-M6 six-zone layout work is intentionally excluded and remains tracked by Issue #8.
+`game/content/sandbox/layout.six_zones.json` is the layout source of truth. Runtime code binds its coordinates, platforms, enemies, prompts, zone bounds, and primary validation actions into Godot nodes.
 
 ## Validation
 

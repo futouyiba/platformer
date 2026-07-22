@@ -7,7 +7,8 @@ const PATHS := {
 	"movement":"res://game/content/sandbox/movement.default.json",
 	"artifacts":"res://game/content/sandbox/artifacts.sandbox.json",
 	"enemies":"res://game/content/sandbox/enemy.sandbox.json",
-	"collisionLayers":"res://game/content/sandbox/collision_layers.json"
+	"collisionLayers":"res://game/content/sandbox/collision_layers.json",
+	"layout":"res://game/content/sandbox/layout.six_zones.json"
 }
 var loaded_content: Dictionary = {}
 
@@ -20,6 +21,7 @@ func load_and_validate_all() -> Dictionary:
 		errors.append_array(validator.validate_artifacts(loaded_content["artifacts"]))
 		errors.append_array(validator.validate_enemy(loaded_content["enemies"]))
 		errors.append_array(validator.validate_collision_layers(loaded_content["collisionLayers"]))
+		errors.append_array(validator.validate_layout(loaded_content["layout"], loaded_content["enemies"]))
 	return {"ok":errors.is_empty(), "errors":errors, "content":loaded_content}
 
 func movement_config():
