@@ -1,0 +1,10 @@
+class_name DamageResult
+extends RefCounted
+var accepted:=false
+var health_before:=0
+var health_after:=0
+var applied_damage:=0
+var knockback_velocity:=Vector2.ZERO
+var stun_seconds:=0.0
+var died:=false
+var events:Array[String]=[]

@@ -1,0 +1,36 @@
+; Godot 4 Gate 1 recovery project for Issue #7.
+config_version=5
+
+[application]
+config/name="Emberpath Movement Sandbox"
+run/main_scene="res://game/scenes/movement_sandbox.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+
+[display]
+window/size/viewport_width=390
+window/size/viewport_height=844
+window/size/window_width_override=390
+window/size/window_height_override=844
+window/stretch/mode="canvas_items"
+window/handheld/orientation=1
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.035, 0.051, 0.075, 1)
+
+[input]
+move_left={"deadzone":0.12,"events":[Object(InputEventKey,"physical_keycode":65),Object(InputEventKey,"physical_keycode":4194311)]}
+move_right={"deadzone":0.12,"events":[Object(InputEventKey,"physical_keycode":68),Object(InputEventKey,"physical_keycode":4194313)]}
+move_up={"deadzone":0.12,"events":[Object(InputEventKey,"physical_keycode":87),Object(InputEventKey,"physical_keycode":4194320)]}
+move_down={"deadzone":0.12,"events":[Object(InputEventKey,"physical_keycode":83),Object(InputEventKey,"physical_keycode":4194322)]}
+jump_request={"deadzone":0.12,"events":[Object(InputEventKey,"physical_keycode":32)]}
+dash_request={"deadzone":0.12,"events":[Object(InputEventKey,"physical_keycode":4194321)]}
+fast_fall_request={"deadzone":0.12,"events":[Object(InputEventKey,"physical_keycode":4194322)]}
+
+[layer_names]
+2d_physics/layer_1="World"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="Enemy"
+2d_physics/layer_4="Trigger"
+2d_physics/layer_5="Projectile"
