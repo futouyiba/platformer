@@ -66,6 +66,8 @@ func _run() -> void:
 		await process_frame
 		if sandbox.current_zone_id() != "A": failures.append("M6 deterministic reset zone")
 		if not player.global_position.is_equal_approx(Vector2(195, 720)): failures.append("M6 deterministic reset position")
+		var camera: Camera2D = sandbox.get_node("CameraRig/Camera2D")
+		if not camera.get_screen_center_position().is_equal_approx(Vector2(195, 422)): failures.append("M6 deterministic reset camera")
 		if one.current_health() != 3 or two.current_health() != 3: failures.append("M6 deterministic enemy reset")
 		if sandbox.get_node("DebugUI/ReviewPanel").visible: failures.append("M6 review panel reset")
 		if not player.respawn_to_last_safe() or not player.global_position.is_equal_approx(Vector2(195, 720)): failures.append("M6 reset must reseed safe respawn at A")

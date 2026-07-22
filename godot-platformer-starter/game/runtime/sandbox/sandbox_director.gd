@@ -183,7 +183,7 @@ func reset_sandbox() -> void:
 	_configure_enemies()
 	artifacts.configure(_content["artifacts"], Callable(self, "_active_enemies"), player)
 	player.reset_to(_spawn)
-	camera_rig.snap_to_target()
+	camera_rig.reset_to_target()
 	zone_tracker.reset()
 	review_panel.visible = false
 	_update_review()
