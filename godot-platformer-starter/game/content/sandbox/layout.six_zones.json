@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "gate1.m6.graybox",
+  "worldBounds": { "x": 0, "y": 0, "width": 2340, "height": 844 },
+  "playerSpawn": [195, 720],
+  "zones": [
+    {
+      "id": "A",
+      "name": "Dash Bridge",
+      "prompt": "A  DASH BRIDGE  ·  Dash through both training targets",
+      "primaryAction": "dash_traversal",
+      "color": "#15283b",
+      "bounds": { "x": 0, "y": 0, "width": 390, "height": 844 },
+      "respawn": [195, 720],
+      "platforms": [
+        { "id": "FloorA", "position": [195, 780], "size": [390, 36] },
+        { "id": "DashBridge", "position": [195, 690], "size": [260, 20] }
+      ],
+      "enemies": [
+        { "id": "TrainingEnemy01", "instanceKey": "enemy_training_01", "contentId": "enemy_training_soldier", "position": [260, 744] },
+        { "id": "TrainingEnemy02", "instanceKey": "enemy_training_02", "contentId": "enemy_training_soldier", "position": [300, 744] }
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Twin Rise",
+      "prompt": "B  TWIN RISE  ·  Jump, then double-jump to the upper ledge",
+      "primaryAction": "jump_double_jump",
+      "color": "#1b3140",
+      "bounds": { "x": 390, "y": 0, "width": 390, "height": 844 },
+      "respawn": [430, 720],
+      "platforms": [
+        { "id": "FloorBEntry", "position": [455, 780], "size": [130, 36] },
+        { "id": "FloorBExit", "position": [735, 780], "size": [90, 36] },
+        { "id": "JumpPlatformB1", "position": [555, 700], "size": [120, 20] },
+        { "id": "JumpPlatformB2", "position": [690, 620], "size": [120, 20] }
+      ],
+      "enemies": []
+    },
+    {
+      "id": "C",
+      "name": "Wind Shaft",
+      "prompt": "C  WIND SHAFT  ·  Double-jump near the target to trigger Wind Ring",
+      "primaryAction": "wind_ring",
+      "color": "#193848",
+      "bounds": { "x": 780, "y": 0, "width": 390, "height": 844 },
+      "respawn": [825, 720],
+      "platforms": [
+        { "id": "FloorC", "position": [975, 780], "size": [390, 36] },
+        { "id": "ShaftLeftC", "position": [875, 600], "size": [24, 180] },
+        { "id": "ShaftRightC", "position": [1075, 600], "size": [24, 180] },
+        { "id": "WindShelfC", "position": [975, 680], "size": [130, 18] }
+      ],
+      "enemies": [
+        { "id": "WindTargetC", "instanceKey": "enemy_wind_c", "contentId": "enemy_training_soldier", "position": [1015, 724] }
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Broken Bridge",
+      "prompt": "D  BROKEN BRIDGE  ·  Drop through the break and fast-fall to land hard",
+      "primaryAction": "fast_fall",
+      "color": "#2c293d",
+      "bounds": { "x": 1170, "y": 0, "width": 390, "height": 844 },
+      "respawn": [1215, 520],
+      "platforms": [
+        { "id": "FloorD", "position": [1365, 780], "size": [390, 36] },
+        { "id": "StepD1", "position": [1215, 700], "size": [100, 18] },
+        { "id": "StepD2", "position": [1275, 620], "size": [100, 18] },
+        { "id": "BrokenBridgeDLeft", "position": [1275, 540], "size": [210, 20] },
+        { "id": "BrokenBridgeDRight", "position": [1495, 540], "size": [130, 20] },
+        { "id": "LandingPadD", "position": [1365, 725], "size": [130, 18] }
+      ],
+      "enemies": [
+        { "id": "FallTargetD", "instanceKey": "enemy_fall_d", "contentId": "enemy_training_soldier", "position": [1365, 690] }
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Wall Corridor",
+      "prompt": "E  WALL CORRIDOR  ·  Hold into a wall while falling to wall-slide",
+      "primaryAction": "wall_slide",
+      "color": "#28343d",
+      "bounds": { "x": 1560, "y": 0, "width": 390, "height": 844 },
+      "respawn": [1605, 720],
+      "platforms": [
+        { "id": "FloorE", "position": [1755, 780], "size": [390, 36] },
+        { "id": "CorridorLeftE", "position": [1680, 670], "size": [24, 180] },
+        { "id": "CorridorRightE", "position": [1830, 670], "size": [24, 180] },
+        { "id": "CorridorEntryE", "position": [1615, 660], "size": [100, 18] },
+        { "id": "CorridorExitE", "position": [1895, 660], "size": [90, 18] }
+      ],
+      "enemies": []
+    },
+    {
+      "id": "F",
+      "name": "Review Station",
+      "prompt": "F  REVIEW STATION  ·  Review the run or reset the sandbox",
+      "primaryAction": "review_reset",
+      "color": "#342f42",
+      "bounds": { "x": 1950, "y": 0, "width": 390, "height": 844 },
+      "respawn": [1995, 720],
+      "platforms": [
+        { "id": "FloorF", "position": [2145, 780], "size": [390, 36] },
+        { "id": "ReviewDeckF", "position": [2145, 665], "size": [240, 20] },
+        { "id": "ResetPlinthF", "position": [2260, 610], "size": [70, 90] }
+      ],
+      "enemies": []
+    }
+  ]
+}
