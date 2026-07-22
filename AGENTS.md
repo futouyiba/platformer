@@ -25,3 +25,17 @@ This project has no additional product-specific instructions.
 - M0–M5 were reported complete and validated in a legacy Godot development conversation, but a later workspace rebuild removed their implementation files.
 - Treat the migrated M0–M5 Issues as historical records, not proof that their code still exists in the current checkout.
 - Active work must first restore or reconstruct the missing implementation and validate it before continuing with M6.
+
+## Continuous integration
+
+- `.github/workflows/ci.yml` is the canonical GitHub Actions workflow for pull requests, pushes to `main`, merge queues, and manual runs.
+- The stable CI job/check name is `Godot validation`. Do not rename it without updating branch protection and repository instructions together.
+- The workflow uses the verified official Godot 4.7.1 stable Linux x86_64 build and read-only repository permissions.
+- Run the same validation locally from `godot-platformer-starter/` with the Godot 4.7.1 executable:
+  - `Godot --headless --editor --path . --quit`
+  - `Godot --headless --path . --script res://tools/test_core.gd`
+  - `Godot --headless --path . --script res://tools/test_content.gd`
+  - `Godot --headless --path . --script res://tools/test_integration.gd`
+  - `Godot --headless --path . --script res://tools/test_scene_smoke.gd`
+  - `Godot --headless --path . --quit-after 3`
+- Require `Godot validation` on `main` only after at least one successful pull-request run; never bypass a failing required check.

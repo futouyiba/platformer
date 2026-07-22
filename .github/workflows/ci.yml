@@ -1,0 +1,73 @@
+name: Godot CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: godot-validation-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_RELEASE: 4.7.1-stable
+  GODOT_ARCHIVE: Godot_v4.7.1-stable_linux.x86_64.zip
+  GODOT_BINARY: Godot_v4.7.1-stable_linux.x86_64
+
+jobs:
+  validation:
+    name: Godot validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+        working-directory: godot-platformer-starter
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install verified Godot 4.7.1
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl --fail --location --retry 3 --silent --show-error \
+            "https://github.com/godotengine/godot-builds/releases/download/${GODOT_RELEASE}/${GODOT_ARCHIVE}" \
+            --output "${GODOT_ARCHIVE}"
+          curl --fail --location --retry 3 --silent --show-error \
+            "https://github.com/godotengine/godot-builds/releases/download/${GODOT_RELEASE}/SHA512-SUMS.txt" \
+            --output SHA512-SUMS.txt
+          grep "  ${GODOT_ARCHIVE}$" SHA512-SUMS.txt | sha512sum --check --strict -
+          unzip -q "${GODOT_ARCHIVE}" -d godot
+          chmod +x "godot/${GODOT_BINARY}"
+          "godot/${GODOT_BINARY}" --version
+
+      - name: Strict import
+        run: |
+          "${RUNNER_TEMP}/godot/${GODOT_BINARY}" --headless --editor --path . --quit
+
+      - name: Core suite
+        run: |
+          "${RUNNER_TEMP}/godot/${GODOT_BINARY}" --headless --path . --script res://tools/test_core.gd
+
+      - name: Content suite
+        run: |
+          "${RUNNER_TEMP}/godot/${GODOT_BINARY}" --headless --path . --script res://tools/test_content.gd
+
+      - name: Integration suite
+        run: |
+          "${RUNNER_TEMP}/godot/${GODOT_BINARY}" --headless --path . --script res://tools/test_integration.gd
+
+      - name: Scene-smoke suite
+        run: |
+          "${RUNNER_TEMP}/godot/${GODOT_BINARY}" --headless --path . --script res://tools/test_scene_smoke.gd
+
+      - name: Headless startup
+        run: |
+          "${RUNNER_TEMP}/godot/${GODOT_BINARY}" --headless --path . --quit-after 3
