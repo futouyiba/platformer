@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "gate1.m5.recovery",
+  "artifacts": [
+    {
+      "id": "artifact_blade_talisman",
+      "slot": "horizontal",
+      "trigger": { "event": "dash_passed_enemy", "maxPerAction": 1 },
+      "effects": [
+        { "type": "line_damage", "damage": 1, "tags": ["dash", "through"], "oneHitPerTargetPerAction": true }
+      ]
+    },
+    {
+      "id": "artifact_wind_ring",
+      "slot": "upward",
+      "trigger": { "event": "double_jump_started", "maxPerAction": 1 },
+      "effects": [
+        { "type": "area_damage", "radius": 2.8, "damage": 1, "tags": ["double_jump", "airborne"] },
+        { "type": "launch", "direction": "up", "impulse": 3.0, "durationSeconds": 0.18 }
+      ]
+    },
+    {
+      "id": "artifact_starfall_seal",
+      "slot": "downward",
+      "trigger": {
+        "event": "hard_landing",
+        "conditions": { "minimumFallSpeed": 12.0, "minimumAirTimeSeconds": 0.28 },
+        "maxPerAction": 1
+      },
+      "effects": [
+        { "type": "area_damage", "radius": 2.6, "damage": 1, "tags": ["fast_fall", "hard_landing"] },
+        { "type": "stun", "durationSeconds": 0.55 }
+      ]
+    }
+  ]
+}
