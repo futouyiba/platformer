@@ -1,0 +1,60 @@
+name: Agent task
+description: Define an implementation-ready task for a contributor or coding agent.
+title: "[Task]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe one independently deliverable outcome. Keep ownership, priority, and status in assignees and Project fields.
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What observable user or system result should this task produce?
+      placeholder: After this task, users can...
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Add relevant links, background, constraints, and decisions.
+  - type: textarea
+    id: in-scope
+    attributes:
+      label: In scope
+      description: List the work included in this task.
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: State related work that is deliberately excluded.
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: Provide testable statements that define completion.
+      placeholder: |
+        - [ ] Given ..., when ..., then ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation plan
+      description: List commands, scenarios, screenshots, or other evidence expected on the pull request.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Link blocked-by relationships, prerequisite issues, or write "None".
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and rollback
+      description: Note migration concerns, failure modes, and rollback steps when relevant.

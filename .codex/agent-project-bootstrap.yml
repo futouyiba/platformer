@@ -1,0 +1,4 @@
+version: 1
+profile: delivery
+task_system: github
+initialized_at: "2026-07-23T00:27:57+08:00"
