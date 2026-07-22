@@ -118,7 +118,21 @@ func _on_combat(event: Dictionary) -> void:
 func _on_artifact(event: Dictionary) -> void:
 	_record({"event":"artifact_triggered", "artifactId":event["artifactId"], "actionId":event["actionId"], "affectedTargets":event["affectedTargets"]})
 	event_label.text = "artifact: %s" % event["artifactId"]
-	_try_complete_primary_action(str(ARTIFACT_ACTIONS.get(event["artifactId"], "")))
+	_try_complete_artifact_action(event)
+
+func _try_complete_artifact_action(event: Dictionary) -> void:
+	var action := str(ARTIFACT_ACTIONS.get(event["artifactId"], ""))
+	if action.is_empty(): return
+	var zone: Dictionary = zone_tracker.current_zone()
+	if zone.is_empty() or str(zone["primaryAction"]) != action: return
+	var configured_targets := _zone_target_keys(zone)
+	if configured_targets.is_empty():
+		_try_complete_primary_action(action)
+		return
+	for target_key in event.get("affectedTargets", []):
+		if configured_targets.has(str(target_key)):
+			_try_complete_primary_action(action)
+			return
 
 func _try_complete_primary_action(action: String) -> void:
 	if action.is_empty(): return
@@ -131,14 +145,18 @@ func _record_dash_target(target: Node, action_id: int) -> void:
 	if action_id <= 0: return
 	var zone: Dictionary = zone_tracker.current_zone()
 	if zone.is_empty() or str(zone["primaryAction"]) != "dash_traversal": return
-	var required_targets: Dictionary = {}
-	for enemy in zone["enemies"]: required_targets[str(enemy["instanceKey"])] = true
+	var required_targets := _zone_target_keys(zone)
 	var target_key := str(target.instance_key)
 	if required_targets.is_empty() or not required_targets.has(target_key): return
 	var progress_key := "%s:%d" % [zone["id"], action_id]
 	if not _dash_hits_by_action.has(progress_key): _dash_hits_by_action[progress_key] = {}
 	_dash_hits_by_action[progress_key][target_key] = true
 	if _dash_hits_by_action[progress_key].size() == required_targets.size(): _try_complete_primary_action("dash_traversal")
+
+func _zone_target_keys(zone: Dictionary) -> Dictionary:
+	var result: Dictionary = {}
+	for enemy in zone.get("enemies", []): result[str(enemy["instanceKey"])] = true
+	return result
 
 func _record(event: Dictionary) -> void:
 	var entry := event.duplicate(true)

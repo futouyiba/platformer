@@ -52,6 +52,7 @@ func _run() -> void:
 		if ordinary.triggered: failures.append("M5 ordinary landing")
 		var star = system.resolve_for_test({"type":"hard_landing", "actionId":202, "fallSpeed":14, "airTimeSeconds":.4})
 		if not star.triggered or not two.is_dead(): failures.append("M5 starfall triggered=%s health=%d distance=%.2f" % [star.triggered, two.current_health(), two.global_position.distance_to(player.global_position)])
+		_validate_wind_zone_target_requirement(sandbox, player, system, failures)
 		_validate_zone_navigation(sandbox, player, failures)
 		var summary: Dictionary = sandbox.run_summary()
 		if summary["currentZone"] != "F": failures.append("M6 F-zone tracking")
@@ -78,6 +79,23 @@ func _zone_passed(summary: Dictionary, zone_id: String) -> bool:
 	for zone in summary["zones"]:
 		if zone["id"] == zone_id: return zone["passed"]
 	return false
+
+func _validate_wind_zone_target_requirement(sandbox: Node, player: CharacterBody2D, system: Node, failures: Array[String]) -> void:
+	var tracker: Node = sandbox.get_node("Systems/ZoneTracker")
+	var target = sandbox.get_node("World/Enemies/WindTargetC")
+	var health_before: int = target.current_health()
+	player.global_position = target.global_position + Vector2(-215, 0)
+	tracker.force_position_check()
+	var far_wind = system.resolve_for_test({"type":"double_jump_started", "actionId":300})
+	var far_event: Dictionary = sandbox.event_log().back()
+	if not far_wind.triggered: failures.append("M6 C far Wind Ring should resolve")
+	if target.current_health() != health_before or not far_event.get("affectedTargets", []).is_empty(): failures.append("M6 C far Wind Ring precondition")
+	if _zone_passed(sandbox.run_summary(), "C"): failures.append("M6 C no-target Wind Ring must remain pending")
+	player.global_position = target.global_position + Vector2(-64, 0)
+	tracker.force_position_check()
+	var near_wind = system.resolve_for_test({"type":"double_jump_started", "actionId":301})
+	if not near_wind.triggered or target.current_health() != health_before - 1: failures.append("M6 C near Wind Ring target effect")
+	if not _zone_passed(sandbox.run_summary(), "C"): failures.append("M6 C affected target should complete Wind Ring")
 
 func _validate_zone_navigation(sandbox: Node, player: CharacterBody2D, failures: Array[String]) -> void:
 	var tracker: Node = sandbox.get_node("Systems/ZoneTracker")
