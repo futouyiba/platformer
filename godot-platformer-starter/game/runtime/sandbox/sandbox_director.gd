@@ -2,6 +2,13 @@ class_name SandboxDirector
 extends Node2D
 
 const LayoutBuilder = preload("res://game/runtime/sandbox/sandbox_layout_builder.gd")
+const MOVEMENT_STATE_ACTIONS := {"wall_slide":"wall_slide"}
+const MOVEMENT_EVENT_ACTIONS := {"double_jump_started":"jump_double_jump", "hard_landing":"fast_fall"}
+const ARTIFACT_ACTIONS := {
+	"artifact_wind_ring":"wind_ring",
+	"artifact_starfall_seal":"fast_fall"
+}
+const ZONE_ENTRY_ACTION := "review_reset"
 
 @onready var player: CharacterBody2D = $Player
 @onready var loader: Node = $Systems/ContentLoader
@@ -26,6 +33,7 @@ var _enemy_definitions: Dictionary = {}
 var _event_log: Array[Dictionary] = []
 var _visited: Dictionary = {}
 var _actions: Dictionary = {}
+var _dash_hits_by_action: Dictionary = {}
 var _current_zone := ""
 var _spawn := Vector2.ZERO
 
@@ -83,8 +91,8 @@ func _on_zone_changed(zone: Dictionary) -> void:
 	_current_zone = str(zone["id"])
 	_visited[_current_zone] = true
 	zone_prompt.text = str(zone["prompt"])
-	review_panel.visible = _current_zone == "F"
-	if _current_zone == "F": _mark_action("F", "review_reset")
+	review_panel.visible = str(zone["primaryAction"]) == ZONE_ENTRY_ACTION
+	_try_complete_primary_action(ZONE_ENTRY_ACTION)
 	_update_review()
 
 func _on_intent(intent) -> void:
@@ -93,16 +101,15 @@ func _on_intent(intent) -> void:
 
 func _on_snapshot(snapshot) -> void:
 	movement_label.text = "state: %s  velocity: (%.2f, %.2f)" % [snapshot.state_name(), snapshot.velocity.x, snapshot.velocity.y]
-	if snapshot.state_name() == "wall_slide": _mark_action("E", "wall_slide")
+	_try_complete_primary_action(str(MOVEMENT_STATE_ACTIONS.get(snapshot.state_name(), "")))
 
 func _on_movement_event(event_name: String) -> void:
 	event_label.text = "movement: %s" % event_name
-	if event_name == "double_jump_started": _mark_action("B", "jump_double_jump")
-	elif event_name == "hard_landing": _mark_action("D", "fast_fall")
+	_try_complete_primary_action(str(MOVEMENT_EVENT_ACTIONS.get(event_name, "")))
 
 func _on_dash(target, action_id: int) -> void:
 	_record({"event":"dash_passed_enemy", "target":target.instance_key, "actionId":action_id})
-	_mark_action("A", "dash_traversal")
+	_record_dash_target(target, action_id)
 
 func _on_combat(event: Dictionary) -> void:
 	_record(event)
@@ -111,14 +118,27 @@ func _on_combat(event: Dictionary) -> void:
 func _on_artifact(event: Dictionary) -> void:
 	_record({"event":"artifact_triggered", "artifactId":event["artifactId"], "actionId":event["actionId"], "affectedTargets":event["affectedTargets"]})
 	event_label.text = "artifact: %s" % event["artifactId"]
-	if event["artifactId"] == "artifact_wind_ring": _mark_action("C", "wind_ring")
-	elif event["artifactId"] == "artifact_starfall_seal": _mark_action("D", "fast_fall")
-	elif event["artifactId"] == "artifact_blade_talisman": _mark_action("A", "dash_traversal")
+	_try_complete_primary_action(str(ARTIFACT_ACTIONS.get(event["artifactId"], "")))
 
-func _mark_action(zone_id: String, action: String) -> void:
-	if _current_zone != zone_id: return
-	_actions[zone_id] = action
+func _try_complete_primary_action(action: String) -> void:
+	if action.is_empty(): return
+	var zone: Dictionary = zone_tracker.current_zone()
+	if zone.is_empty() or str(zone["primaryAction"]) != action: return
+	_actions[str(zone["id"])] = action
 	_update_review()
+
+func _record_dash_target(target: Node, action_id: int) -> void:
+	if action_id <= 0: return
+	var zone: Dictionary = zone_tracker.current_zone()
+	if zone.is_empty() or str(zone["primaryAction"]) != "dash_traversal": return
+	var required_targets: Dictionary = {}
+	for enemy in zone["enemies"]: required_targets[str(enemy["instanceKey"])] = true
+	var target_key := str(target.instance_key)
+	if required_targets.is_empty() or not required_targets.has(target_key): return
+	var progress_key := "%s:%d" % [zone["id"], action_id]
+	if not _dash_hits_by_action.has(progress_key): _dash_hits_by_action[progress_key] = {}
+	_dash_hits_by_action[progress_key][target_key] = true
+	if _dash_hits_by_action[progress_key].size() == required_targets.size(): _try_complete_primary_action("dash_traversal")
 
 func _record(event: Dictionary) -> void:
 	var entry := event.duplicate(true)
@@ -140,6 +160,7 @@ func reset_sandbox() -> void:
 	_event_log.clear()
 	_visited.clear()
 	_actions.clear()
+	_dash_hits_by_action.clear()
 	_current_zone = ""
 	_configure_enemies()
 	artifacts.configure(_content["artifacts"], Callable(self, "_active_enemies"), player)

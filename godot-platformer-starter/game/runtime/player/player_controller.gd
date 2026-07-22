@@ -45,7 +45,7 @@ func respawn_to_last_safe()->bool:
 	if ok:_machine.respawn();_dash_query.reset()
 	return ok
 func reset_to(spawn_position:Vector2)->void:
-	global_position=spawn_position;velocity=Vector2.ZERO;_move=0;_jump=false;_dash=false;_dash_axis=0;_fast_fall=false;_latest=_machine.respawn();_dash_query.reset()
+	global_position=spawn_position;velocity=Vector2.ZERO;_move=0;_jump=false;_dash=false;_dash_axis=0;_fast_fall=false;_latest=_machine.respawn();_dash_query.reset();_respawn.reset(spawn_position)
 func _physics_process(delta:float)->void:
 	if _config==null:return
 	var facing: float = _move if not is_zero_approx(_move) else (1.0 if _latest==null else _latest.facing)
