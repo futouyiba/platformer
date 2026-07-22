@@ -46,9 +46,7 @@ func _run() -> void:
 		if ordinary.triggered: failures.append("M5 ordinary landing")
 		var star = system.resolve_for_test({"type":"hard_landing", "actionId":202, "fallSpeed":14, "airTimeSeconds":.4})
 		if not star.triggered or not two.is_dead(): failures.append("M5 starfall")
-		player.global_position = Vector2(2145, 720)
-		await physics_frame
-		await process_frame
+		_validate_zone_navigation(sandbox, player, failures)
 		var summary: Dictionary = sandbox.run_summary()
 		if summary["currentZone"] != "F": failures.append("M6 F-zone tracking")
 		if summary["zones"].size() != 6: failures.append("M6 six-zone review summary")
@@ -64,3 +62,21 @@ func _run() -> void:
 	quit(0 if failures.is_empty() else 1)
 
 func _on_hit(target, action_id: int) -> void: _hits.append("%s:%d" % [target.instance_key, action_id])
+
+func _validate_zone_navigation(sandbox: Node, player: CharacterBody2D, failures: Array[String]) -> void:
+	var tracker: Node = sandbox.get_node("Systems/ZoneTracker")
+	var camera: Node2D = sandbox.get_node("CameraRig")
+	var prompt: Label = sandbox.get_node("DebugUI/ZonePrompt")
+	var viewport_width := float(ProjectSettings.get_setting("display/window/size/viewport_width"))
+	var layout: Dictionary = sandbox.layout_content()
+	var world_width := float(layout["worldBounds"]["width"])
+	for zone in layout["zones"]:
+		var bounds: Dictionary = zone["bounds"]
+		var center_x := float(bounds["x"]) + float(bounds["width"]) * 0.5
+		player.global_position = Vector2(center_x, 720)
+		tracker.force_position_check()
+		camera.snap_to_target()
+		if sandbox.current_zone_id() != zone["id"]: failures.append("M6 zone %s tracking" % zone["id"])
+		if prompt.text != zone["prompt"]: failures.append("M6 zone %s prompt" % zone["id"])
+		var expected_x := clampf(center_x, viewport_width * 0.5, world_width - viewport_width * 0.5)
+		if not is_equal_approx(camera.global_position.x, expected_x): failures.append("M6 zone %s camera" % zone["id"])

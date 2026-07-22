@@ -29,6 +29,9 @@ func _run() -> void:
 		for zone in layout.get("zones", []):
 			expected_platforms += zone["platforms"].size()
 			expected_enemies += zone["enemies"].size()
+			var trigger = sandbox.get_node_or_null("World/RoomTriggers/Zone%s" % zone["id"])
+			if trigger == null: failures.append("M6 zone %s trigger binding" % zone["id"])
+			elif trigger.get_meta("primary_action", "") != zone["primaryAction"]: failures.append("M6 zone %s primary-action binding" % zone["id"])
 		if sandbox.get_node("World/Platforms").get_child_count() != expected_platforms: failures.append("M6 platform binding count")
 		if sandbox.get_node("World/Enemies").get_child_count() != expected_enemies: failures.append("M6 enemy binding count")
 		if sandbox.get_node("DebugUI/ZonePrompt").text != layout["zones"][0]["prompt"]: failures.append("M6 initial zone prompt")
