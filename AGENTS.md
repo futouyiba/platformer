@@ -22,6 +22,6 @@ This project has no additional product-specific instructions.
 ### Task-system cutover
 
 - GitHub became the mutable task source of truth on 2026-07-23.
-- M0–M5 were reported complete and validated in the legacy Codex task `019f8a70-0564-7b71-b238-a755a5451f54`, but a later workspace rebuild removed their implementation files.
+- M0–M5 were reported complete and validated in a legacy Godot development conversation, but a later workspace rebuild removed their implementation files.
 - Treat the migrated M0–M5 Issues as historical records, not proof that their code still exists in the current checkout.
 - Active work must first restore or reconstruct the missing implementation and validate it before continuing with M6.
